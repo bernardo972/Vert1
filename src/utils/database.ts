@@ -108,16 +108,24 @@ export const dbInit = async () => {
     if (prodSnapshot && prodSnapshot.empty) {
       console.log("Firestore empty. Seeding initial catalog records...");
       for (const p of INITIAL_PRODUCTS) {
-        await setDoc(doc(db, 'products', p.id), p);
+        await setDoc(doc(db, 'products', p.id), p).catch(err => {
+          console.warn(`Failed to seed product ${p.id}:`, err);
+        });
       }
       for (const u of INITIAL_USERS) {
-        await setDoc(doc(db, 'users', u.id), u);
+        await setDoc(doc(db, 'users', u.id), u).catch(err => {
+          console.warn(`Failed to seed user ${u.id}:`, err);
+        });
       }
       for (const s of INITIAL_SALES) {
-        await setDoc(doc(db, 'sales', s.id), s);
+        await setDoc(doc(db, 'sales', s.id), s).catch(err => {
+          console.warn(`Failed to seed sale ${s.id}:`, err);
+        });
       }
       for (const i of INITIAL_INVOICES) {
-        await setDoc(doc(db, 'invoices', i.id), i);
+        await setDoc(doc(db, 'invoices', i.id), i).catch(err => {
+          console.warn(`Failed to seed invoice ${i.id}:`, err);
+        });
       }
       console.log("Firestore successfully seeded with default ERP catalogue.");
     }
