@@ -174,7 +174,13 @@ export const dbInit = async () => {
 
 // --- Products / Inventory ---
 export const getProducts = (): Product[] => {
-  return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || JSON.stringify(INITIAL_PRODUCTS));
+  try {
+    const data = localStorage.getItem(PRODUCTS_KEY);
+    return data ? JSON.parse(data) : INITIAL_PRODUCTS;
+  } catch (error) {
+    console.error("Failed to parse products from localStorage:", error);
+    return INITIAL_PRODUCTS;
+  }
 };
 
 export const saveProducts = (products: Product[]) => {
@@ -228,7 +234,13 @@ export const deleteProduct = (id: string) => {
 
 // --- Users & Authentication ---
 export const getUsers = (): User[] => {
-  return JSON.parse(localStorage.getItem(USERS_KEY) || JSON.stringify(INITIAL_USERS));
+  try {
+    const data = localStorage.getItem(USERS_KEY);
+    return data ? JSON.parse(data) : INITIAL_USERS;
+  } catch (error) {
+    console.error("Failed to parse users from localStorage:", error);
+    return INITIAL_USERS;
+  }
 };
 
 export const saveUsers = (users: User[]) => {
@@ -261,9 +273,14 @@ export const registerUser = (user: Omit<User, 'id' | 'isTwoFactorEnabled'>): Use
 };
 
 export const getLoggedInUser = (): User | null => {
-  const saved = localStorage.getItem(LOGGED_USER_KEY);
-  if (!saved) return null;
-  return JSON.parse(saved);
+  try {
+    const saved = localStorage.getItem(LOGGED_USER_KEY);
+    if (!saved || saved === 'undefined' || saved === 'null') return null;
+    return JSON.parse(saved);
+  } catch (error) {
+    console.error("Failed to parse logged user from localStorage:", error);
+    return null;
+  }
 };
 
 export const setLoggedInUser = (user: User | null) => {
@@ -296,11 +313,23 @@ export const updateUserProfile = (updatedUser: User) => {
 
 // --- Invoices & Sales ---
 export const getSales = (): Sale[] => {
-  return JSON.parse(localStorage.getItem(SALES_KEY) || JSON.stringify(INITIAL_SALES));
+  try {
+    const data = localStorage.getItem(SALES_KEY);
+    return data ? JSON.parse(data) : INITIAL_SALES;
+  } catch (error) {
+    console.error("Failed to parse sales from localStorage:", error);
+    return INITIAL_SALES;
+  }
 };
 
 export const getInvoices = (): Invoice[] => {
-  return JSON.parse(localStorage.getItem(INVOICES_KEY) || JSON.stringify(INITIAL_INVOICES));
+  try {
+    const data = localStorage.getItem(INVOICES_KEY);
+    return data ? JSON.parse(data) : INITIAL_INVOICES;
+  } catch (error) {
+    console.error("Failed to parse invoices from localStorage:", error);
+    return INITIAL_INVOICES;
+  }
 };
 
 export const saveSales = (sales: Sale[]) => {
