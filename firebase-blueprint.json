@@ -1,0 +1,95 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User account information and role",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "isTwoFactorEnabled": { "type": "boolean" },
+        "cpfOrCnpj": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "role", "isTwoFactorEnabled"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Inventory product item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "sku": { "type": "string" },
+        "price": { "type": "number" },
+        "costPrice": { "type": "number" },
+        "category": { "type": "string" },
+        "stock": { "type": "number" },
+        "minStock": { "type": "number" },
+        "imageUrl": { "type": "string" },
+        "description": { "type": "string" },
+        "externalUrl": { "type": "string" }
+      },
+      "required": ["id", "name", "sku", "price", "costPrice", "category", "stock", "minStock", "imageUrl", "description"]
+    },
+    "Sale": {
+      "title": "Sale Record",
+      "description": "Sales logs detail including line items",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "items": { "type": "array" },
+        "total": { "type": "number" },
+        "costTotal": { "type": "number" },
+        "profit": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "invoiceId": { "type": "string" }
+      },
+      "required": ["id", "userId", "customerName", "customerEmail", "items", "total", "costTotal", "profit", "paymentMethod", "timestamp"]
+    },
+    "Invoice": {
+      "title": "Invoice Details",
+      "description": "NF-e (Notas Fiscais) representation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "saleId": { "type": "string" },
+        "accessKey": { "type": "string" },
+        "emitterName": { "type": "string" },
+        "emitterCNPJ": { "type": "string" },
+        "receiverName": { "type": "string" },
+        "receiverCPF_CNPJ": { "type": "string" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "taxes": { "type": "object" },
+        "total": { "type": "number" },
+        "timestamp": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "saleId", "accessKey", "emitterName", "emitterCNPJ", "receiverName", "receiverCPF_CNPJ", "items", "subtotal", "taxes", "total", "timestamp", "status"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles by UID"
+    },
+    "products/{productId}": {
+      "schema": "Product",
+      "description": "Available products, stock counts, and metadata"
+    },
+    "sales/{saleId}": {
+      "schema": "Sale",
+      "description": "Historic sale events"
+    },
+    "invoices/{invoiceId}": {
+      "schema": "Invoice",
+      "description": "Computed NF-e invoice documents"
+    }
+  }
+}

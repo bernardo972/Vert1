@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default-deny catch-all rule
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Auth helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isManager() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && getUserData().role == 'manager';
+    }
+
+    function isSellerOrManager() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (getUserData().role == 'seller' || getUserData().role == 'manager');
+    }
+
+    // --- Entity Collections ---
+
+    // 1. Users: Read/Write by owner; Delete allowed by Manager
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() && request.auth.uid == userId;
+      allow delete: if isManager();
+    }
+
+    // 2. Products: Free read (anyone browsing the catalog), write restricted by role
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update: if isSellerOrManager();
+      allow delete: if isManager();
+    }
+
+    // 3. Sales: Read by seller or owner, creation by any signed in user
+    match /sales/{saleId} {
+      allow read: if isSellerOrManager() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn();
+      allow update, delete: if isManager();
+    }
+
+    // 4. Invoices: Read by seller/manager or any signed-in customer context, write by any buyer, delete by manager
+    match /invoices/{invoiceId} {
+      allow read: if isSellerOrManager() || isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isManager();
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Sistema de Vendas e Gestão de Estoque",
+  "description": "Plataforma minimalista e integrada de vendas, controle de estoque, relatórios financeiros em tempo real e emissão de notas fiscais com autenticação em dois fatores (2FA).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
